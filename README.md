@@ -1,58 +1,320 @@
-# The OpenAPI Specification
+openapi: "3.0.2"
+info:
+  title: "OpenWeatherMap API"
+  description: "Get the current weather, daily forecast for 16 days, and a three-hour-interval forecast for 5 days for your city. Helpful stats, graphics, and this day in history charts are available for your reference. Interactive maps show precipitation, clouds, pressure, wind around your location stations. Data is available in JSON, XML, or HTML format. **Note**: This sample Swagger file covers the `current` endpoint only from the OpenWeatherMap API. <br/><br/> **Note**: All parameters are optional, but you must select at least one parameter. Calling the API by city ID (using the `id` parameter) will provide the most precise location results."
+  version: "2.5"
+  termsOfService: "https://openweathermap.org/terms"
+  contact:
+    name: "OpenWeatherMap API"
+    url: "https://openweathermap.org/api"
+    email: "some_email@gmail.com"
+  license:
+    name: "CC Attribution-ShareAlike 4.0 (CC BY-SA 4.0)"
+    url: "https://openweathermap.org/price"
 
-![Build Status](https://github.com/OAI/OpenAPI-Specification/workflows/validate-markdown/badge.svg)
+servers:
+- url: "https://api.openweathermap.org/data/2.5"
 
-![](https://avatars3.githubusercontent.com/u/16343502?v=3&s=200)
+paths:
+  /weather:
+    get:
+      tags:
+      - Current Weather Data
+      summary: "Call current weather data for one location"
+      description: "Access current weather data for any location on Earth including over 200,000 cities! Current weather is frequently updated based on global models and data from more than 40,000 weather stations."
+      operationId: CurrentWeatherData
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/lat'
+        - $ref: '#/components/parameters/lon'
+        - $ref: '#/components/parameters/zip'
+        - $ref: '#/components/parameters/units'
+        - $ref: '#/components/parameters/lang'
+        - $ref: '#/components/parameters/mode'
 
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/200'
+        "404":
+          description: Not found response
+          content:
+            text/plain:
+              schema:
+                title: Weather not found
+                type: string
+                example: Not found
+security:
+- app_id: []
 
-The OpenAPI Specification is a community-driven open specification within the [OpenAPI Initiative](https://www.openapis.org/), a Linux Foundation Collaborative Project.
+tags:
+  - name: Current Weather Data
+    description: "Get current weather details"
 
-The OpenAPI Specification (OAS) defines a standard, programming language-agnostic interface description for HTTP APIs, which allows both humans and computers to discover and understand the capabilities of a service without requiring access to source code, additional documentation, or inspection of network traffic. When properly defined via OpenAPI, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interface descriptions have done for lower-level programming, the OpenAPI Specification removes guesswork in calling a service.
+externalDocs:
+  description: API Documentation
+  url: https://openweathermap.org/api
 
-Use cases for machine-readable API definition documents include, but are not limited to: interactive documentation; code generation for documentation, clients, and servers; and automation of test cases. OpenAPI documents describe an APIs services and are represented in either YAML or JSON formats. These documents may either be produced and served statically or be generated dynamically from an application.
+components:
 
-The OpenAPI Specification does not require rewriting existing APIs. It does not require binding any software to a service – the service being described may not even be owned by the creator of its description. It does, however, require the capabilities of the service be described in the structure of the OpenAPI Specification. Not all services can be described by OpenAPI – this specification is not intended to cover every possible style of HTTP APIs, but does include support for [REST APIs](https://en.wikipedia.org/wiki/Representational_state_transfer). The OpenAPI Specification does not mandate a specific development process such as design-first or code-first. It does facilitate either technique by establishing clear interactions with a HTTP API.
+  parameters:
+    q:
+      name: q
+      in: query
+      description: "**City name**. *Example: London*. You can call by city name, or by city name and country code. The API responds with a list of results that match a searching word. For the query value, type the city name and optionally the country code divided by a comma; use ISO 3166 country codes."
+      schema:
+        type: string
+    id:
+      name: id
+      in: query
+      description: "**City ID**. *Example: `2172797`*. You can call by city ID. The API responds with the exact result. The List of city IDs can be downloaded [here](http://bulk.openweathermap.org/sample/). You can include multiple cities in this parameter &mdash; just separate them by commas. The limit of locations is 20. *Note: A single ID counts as a one API call. So, if you have city IDs, it's treated as 3 API calls.*"
+      schema:
+        type: string
 
-This GitHub project is the starting point for OpenAPI. Here you will find the information you need about the OpenAPI Specification, simple examples of what it looks like, and some general information regarding the project.
+    lat:
+      name: lat
+      in: query
+      description: "**Latitude**. *Example: 35*. The latitude coordinate of the location of your interest. Must use with `lon`."
+      schema:
+        type: string
 
-## Current Version - 3.1.0
+    lon:
+      name: lon
+      in: query
+      description: "**Longitude**. *Example: 139*. Longitude coordinate of the location of your interest. Must use with `lat`."
+      schema:
+        type: string
 
-The current version of the OpenAPI specification is [OpenAPI Specification 3.1.0](versions/3.1.0.md).
+    zip:
+      name: zip
+      in: query
+      description: "**Zip code**. Search by zip code. *Example: 95050,us*. Please note that if the country is not specified, the search uses USA as a default."
+      schema:
+        type: string
 
-### Previous Versions
+    units:
+      name: units
+      in: query
+      description: '**Units**. *Example: imperial*. Possible values: `standard`, `metric`, and `imperial`. When you do not use the `units` parameter, the format is `standard` by default.'
+      schema:
+        type: string
+        enum: [standard, metric, imperial]
+        default: "imperial"
 
-This repository also contains all [previous versions](versions).
+    lang:
+      name: lang
+      in: query
+      description: '**Language**. *Example: en*. You can use lang parameter to get the output in your language. We support the following languages that you can use with the corresponded lang values: Arabic - `ar`, Bulgarian - `bg`, Catalan - `ca`, Czech - `cz`, German - `de`, Greek - `el`, English - `en`, Persian (Farsi) - `fa`, Finnish - `fi`, French - `fr`, Galician - `gl`, Croatian - `hr`, Hungarian - `hu`, Italian - `it`, Japanese - `ja`, Korean - `kr`, Latvian - `la`, Lithuanian - `lt`, Macedonian - `mk`, Dutch - `nl`, Polish - `pl`, Portuguese - `pt`, Romanian - `ro`, Russian - `ru`, Swedish - `se`, Slovak - `sk`, Slovenian - `sl`, Spanish - `es`, Turkish - `tr`, Ukrainian - `ua`, Vietnamese - `vi`, Chinese Simplified - `zh_cn`, Chinese Traditional - `zh_tw`.'
+      schema:
+        type: string
+        enum: [ar, bg, ca, cz, de, el, en, fa, fi, fr, gl, hr, hu, it, ja, kr, la, lt, mk, nl, pl, pt, ro, ru, se, sk, sl, es, tr, ua, vi, zh_cn, zh_tw]
+        default: "en"
 
-Each folder in this repository, such as [examples](examples) and [schemas](schemas), should contain folders pertaining to the current and previous versions of the specification.
+    mode:
+      name: mode
+      in: query
+      description: "**Mode**. *Example: html*. Determines the format of the response. Possible values are `json`, `xml`, and `html`. If the mode parameter is empty, the format is `json` by default."
+      schema:
+        type: string
+        enum: [json, xml, html]
+        default: "json"
 
-## See It in Action
+  schemas:
+    "200":
+      title: Successful response
+      type: object
+      properties:
+        coord:
+          $ref: '#/components/schemas/Coord'
+        weather:
+          type: array
+          items:
+            $ref: '#/components/schemas/Weather'
+          description: (more info Weather condition codes)
+        base:
+          type: string
+          description: Internal parameter
+          example: cmc stations
+        main:
+          $ref: '#/components/schemas/Main'
+        visibility:
+          type: integer
+          description: Visibility, meter
+          example: 16093
+        wind:
+          $ref: '#/components/schemas/Wind'
+        clouds:
+          $ref: '#/components/schemas/Clouds'
+        rain:
+          $ref: '#/components/schemas/Rain'
+        snow:
+          $ref: '#/components/schemas/Snow'
+        dt:
+          type: integer
+          description: Time of data calculation, unix, UTC
+          format: int32
+          example: 1435658272
+        sys:
+          $ref: '#/components/schemas/Sys'
+        id:
+          type: integer
+          description: City ID
+          format: int32
+          example: 2172797
+        name:
+          type: string
+          example: Cairns
+        cod:
+          type: integer
+          description: Internal parameter
+          format: int32
+          example: 200
+    Coord:
+      title: Coord
+      type: object
+      properties:
+        lon:
+          type: number
+          description: City geo location, longitude
+          example: 145.77000000000001
+        lat:
+          type: number
+          description: City geo location, latitude
+          example: -16.920000000000002
+    Weather:
+      title: Weather
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Weather condition id
+          format: int32
+          example: 803
+        main:
+          type: string
+          description: Group of weather parameters (Rain, Snow, Extreme etc.)
+          example: Clouds
+        description:
+          type: string
+          description: Weather condition within the group
+          example: broken clouds
+        icon:
+          type: string
+          description: Weather icon id
+          example: 04n
+    Main:
+      title: Main
+      type: object
+      properties:
+        temp:
+          type: number
+          description: 'Temperature. Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.'
+          example: 293.25
+        pressure:
+          type: integer
+          description: Atmospheric pressure (on the sea level, if there is no sea_level or grnd_level data), hPa
+          format: int32
+          example: 1019
+        humidity:
+          type: integer
+          description: Humidity, %
+          format: int32
+          example: 83
+        temp_min:
+          type: number
+          description: 'Minimum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally). Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.'
+          example: 289.81999999999999
+        temp_max:
+          type: number
+          description: 'Maximum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally). Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.'
+          example: 295.37
+        sea_level:
+          type: number
+          description: Atmospheric pressure on the sea level, hPa
+          example: 984
+        grnd_level:
+          type: number
+          description: Atmospheric pressure on the ground level, hPa
+          example: 990
+    Wind:
+      title: Wind
+      type: object
+      properties:
+        speed:
+          type: number
+          description: 'Wind speed. Unit Default: meter/sec, Metric: meter/sec, Imperial: miles/hour.'
+          example: 5.0999999999999996
+        deg:
+          type: integer
+          description: Wind direction, degrees (meteorological)
+          format: int32
+          example: 150
+    Clouds:
+      title: Clouds
+      type: object
+      properties:
+        all:
+          type: integer
+          description: Cloudiness, %
+          format: int32
+          example: 75
+    Rain:
+      title: Rain
+      type: object
+      properties:
+        3h:
+          type: integer
+          description: Rain volume for the last 3 hours
+          format: int32
+          example: 3
+    Snow:
+      title: Snow
+      type: object
+      properties:
+        3h:
+          type: number
+          description: Snow volume for the last 3 hours
+          example: 6
+    Sys:
+      title: Sys
+      type: object
+      properties:
+        type:
+          type: integer
+          description: Internal parameter
+          format: int32
+          example: 1
+        id:
+          type: integer
+          description: Internal parameter
+          format: int32
+          example: 8166
+        message:
+          type: number
+          description: Internal parameter
+          example: 0.0166
+        country:
+          type: string
+          description: Country code (GB, JP etc.)
+          example: AU
+        sunrise:
+          type: integer
+          description: Sunrise time, unix, UTC
+          format: int32
+          example: 1435610796
+        sunset:
+          type: integer
+          description: Sunset time, unix, UTC
+          format: int32
+          example: 1435650870
 
-If you just want to see it work, check out the [list of current examples](examples).
-
-## Tools and Libraries
-
-Looking to see how you can create your own OpenAPI definition, present it, or otherwise use it? Check out the growing
-[list of implementations](IMPLEMENTATIONS.md).
-
-## Participation
-
-The current process for development of the OpenAPI Specification is described in 
-[Development Guidelines](DEVELOPMENT.md).
-Development of the next version of the OpenAPI Specification is guided by the [Technical Steering Committee (TSC)](https://www.openapis.org/participate/how-to-contribute/governance#TDC). This group of committers bring their API expertise, incorporate feedback from the community, and expand the group of committers as appropriate. All development activity on the future specification will be performed as features and merged into this branch. Upon release of the future specification, this branch will be merged to master.
-
-The TSC holds weekly web conferences to review open pull requests and discuss open issues related to the evolving OpenAPI Specification. Participation in weekly calls and scheduled working sessions is open to the community. You can view the [TSC calendar online](https://openapi.groups.io/g/tsc/calendar), and import it to your calendar using the [iCal link](https://openapi.groups.io/g/tsc/ics/1105671/1995679554/feed.ics).
-
-The OpenAPI Initiative encourages participation from individuals and companies alike. If you want to participate in the evolution of the OpenAPI Specification, consider taking the following actions:
-
-* Review the [current specification](versions/3.1.0.md). The human-readable markdown file _is the source of truth_ for the specification.
-* Review the [development](DEVELOPMENT.md) process so you understand how the spec is evolving.
-* Check the [issues](https://github.com/OAI/OpenAPI-Specification/issues) and [pull requests](https://github.com/OAI/OpenAPI-Specification/pulls) to see if someone has already documented your idea or feedback on the specification. You can follow an existing conversation by subscribing to the existing issue or PR.
-* Create an issue to describe a new concern. If possible, propose a solution.
-
-Not all feedback can be accommodated and there may be solid arguments for or against a change being appropriate for the specification.
-
-## Licensing
-
-See: [License (Apache-2.0)](https://github.com/OAI/OpenAPI-Specification/blob/master/LICENSE)
-
-![Analytics](https://ga-beacon.appspot.com/UA-831873-42/readme.md?pixel)
+  securitySchemes:
+    app_id:
+      type: apiKey
+      description: "API key to authorize requests. (If you don't have an API key, get one at https://openweathermap.org/. See https://idratherbewriting.com/learnapidoc/docapis_get_auth_keys.html for details.)"
+      name: appid
+      in: query
